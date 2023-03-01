@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" href="../public/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="../public/stylesheets/table-content.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <div id="line-chart" ></div>
+  <table class="fl-table">
+    <thead>
+      <tr>
+        <th>Name <a href="/client/index?filter=name&order=desc">&#8595;</a> <a href="/client/index?filter=name&order=asc">&#8593;</a></th>
+        <th>Phone <a href="/client/index?filter=phone&order=desc">&#8595;</a> <a href="/client/index?filter=phone&order=asc">&#8593;</a></th>
+        <th>Email <a href="/client/index?filter=email&order=desc">&#8595;</a> <a href="/client/index?filter=email&order=asc">&#8593;</a></th>
+        <th>Website <a href="/client/index?filter=website&order=desc">&#8595;</a> <a href="/client/index?filter=website&order=asc">&#8593;</a></th>
+        <th>Datetime <a href="/client/index?filter=datetime&order=desc">&#8595;</a> <a href="/client/index?filter=datetime&order=asc">&#8593;</a></th>
+        <th>Cmd</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% for(var i=0; i < data.length; i++) { %>
+      <tr>
+        <td><%= data[i].name %></td>
+        <td><%= data[i].phone %></td>
+        <td><%= data[i].email %></td>
+        <td><%= data[i].website %></td>
+        <td><%= data[i].datetime %></td>
+        <td>
+          <button 
+            style="background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;" 
+            onclick="clicked('<%= data[i].id %>')"><i class="fa fa-trash-o" style="font-size: 1rem;color: black;"></i>
+          </button>
+        </td>
+      </tr>
+      <% } %>
+    </tbody>
+  </table>
+</body>
+<script>
+  function clicked(id) {
+     if (confirm('Voulez vous supprimer cette entrée?')) {
+        fetch('/client/deleteClientInfo/' + id,  {
+          method: 'DELETE'
+        }).then(res => {
+          window.location.reload();
+        });
+      } 
+      else {
+        return false;
+    }
+  }
+  /*Chart section*/
+  function convertDateData(jsonArray) {
+  var result = [];
+  var date = "";
+  var number = 0;
+  for (var i = 0; i < jsonArray.length; i++) {
+    var dateArray = jsonArray[i].date.split("/");
+    var newDate = dateArray[2] + "-" + dateArray[0] + "-" + dateArray[1];
+    if (newDate != date) {
+      if (date != "") {
+        result.push({
+          date: date,
+          number: number
+        });
+      }
+      date = newDate;
+      number = 1;
+    } else {
+      number++;
+    }
+  }
+  result.push({
+    date: date,
+    number: number
+  });
+  return result;
+}
+  var temp_array = <%- JSON.stringify(data) %>;
+  var data_temp = [];
+  temp_array.forEach(element => {
+    data_temp.push({date : element.datetime.split(',')[0]});
+  });
+  var data = convertDateData(data_temp);  
+  console.log(data);
+  
+  Morris.Line({element: 'line-chart',
+    data: data,
+    xkey: 'date',
+    ykeys: ['number'],
+    labels: ['Number']});
+</script>
+</html>

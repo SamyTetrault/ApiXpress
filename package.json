@@ -1,0 +1,23 @@
+{
+  "name": "emailxpress",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "connect-ensure-authenticated": "^1.0.10",
+    "cookie-parser": "~1.4.4",
+    "crypto-js": "^4.1.1",
+    "debug": "~2.6.9",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "http-errors": "~1.6.3",
+    "https": "^1.0.0",
+    "jade": "^0.29.0",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "~1.9.1",
+    "uuid": "^9.0.0"
+  }
+}
